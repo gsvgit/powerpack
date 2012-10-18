@@ -1,3 +1,11 @@
 [Dd]ebug/
 [Rr]elease/
 [Bb]in/
+tools
+*.err
+tests/FsYacc/*/*.fsi
+
+workyard/tests/fsyacc/*.diff
+workyard/tests/fsyacc/*.exe
+workyard/tests/fsyacc/*.fsi
+workyard/tests/fsyacc/*.pdb
