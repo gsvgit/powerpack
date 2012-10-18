@@ -78,27 +78,145 @@ module Utils =
 type FsLexFsYaccTests() =
     let mainFile = "main.fs"
     let treeFile = "tree.fs"
-    let baseFscFlags = "--define:NO_INSTALLED_ILX_CONFIGS  -r:System.Core.dll --nowarn:20 --define:COMPILED -r FSharp.PowerPack.dll -r FSharp.PowerPack.Compatibility.dll"
+    let baseFscFlags = "--define:NO_INSTALLED_ILX_CONFIGS  -r:System.Core.dll --nowarn:20 --define:COMPILED -r FSharp.PowerPack.dll "
     let testPath dir file = Path.Combine(dir,file)
     let inputPath dir file = Path.Combine(Path.Combine(dir,"input"),file)
     let checkPath dir file = Path.Combine(Path.Combine(dir,"stuff"),file)
 
+    let test1BasedCompilation unicode mlCompat dir outFile =
+        fslex ("--light-off -o " + testPath dir "test1lex.fs" + (if unicode then " --unicode " else " ")) (testPath dir "test1lex.fsl")
+        fsyacc ("--light-off --module TestParser " + (if mlCompat then " --ml-compatibility " else " ") + " -o " + testPath dir "test1.fs") (testPath dir "test1.fsy")
+        compile 
+            (baseFscFlags + (if mlCompat then "  -r FSharp.PowerPack.Compatibility.dll " else " ") + " -g -o:" + outFile) 
+            ([treeFile;"test1.fsi";"test1.fs";"test1lex.fs"; mainFile] |> List.map (testPath dir))
 
     [<Test>]
-    member this.test1()=
+    member this.test1() =
+        let exe = "test1.exe"
         let dir = @"../../tests/FsYacc/test1"
-        fslex ("--light-off -o " + testPath dir "test1lex.fs") (testPath dir "test1lex.fsl")
-        fsyacc ("--light-off --module TestParser -o " + testPath dir "test1.fs") (testPath dir "test1.fsy")
-        compile 
-            (baseFscFlags + " -g -o:" + "test1.exe") 
-            ([treeFile;"test1.fsi";"test1.fs";"test1lex.fs"; mainFile] |> List.map (testPath dir))
-        let errOut = testPath dir "test1.input1.tokens.err"        
-        runTest "test1.exe" false [inputPath dir "test1.input1"] errOut
+        test1BasedCompilation false false dir exe
+        let errOut = testPath dir "test1.input1.err"        
+        runTest exe false [inputPath dir "test1.input1"] errOut
         printfn "Compare error output."
         let chPath = checkPath dir "test1.input1.bsl"
         if compareResult errOut chPath
         then Assert.Pass()
         else Assert.Fail(errOut + " is not equal to " + chPath)
 
-        
+    [<Test>]
+    member this.test1tokens() =
+        let exe = "test1tokens.exe"
+        let dir = @"../../tests/FsYacc/test1tokens"
+        test1BasedCompilation false false dir exe
+        let errOut = testPath dir "test1.input1.tokens.err"        
+        runTest exe true [inputPath dir "test1.input1"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input1.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
 
+    [<Test>]
+    member this.test1variations() =
+        let exe = "test1variations.exe"
+        let dir = @"../../tests/FsYacc/test1variations"
+        test1BasedCompilation false false dir exe
+        let errOut = testPath dir "test1.input2.err"        
+        runTest exe false (["test1.input2.variation1";"test1.input2.variation2"] |> List.map (inputPath dir)) errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input2.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1compat() =
+        let exe = "test1compat.exe"
+        let dir = @"../../tests/FsYacc/test1compat"
+        test1BasedCompilation false true dir exe
+        let errOut = testPath dir "test1.input1.err"        
+        runTest exe false [inputPath dir "test1.input1"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input1.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1compatTokens() =
+        let exe = "test1compatTokens.exe"
+        let dir = @"../../tests/FsYacc/test1compatTokens"
+        test1BasedCompilation false true dir exe
+        let errOut = testPath dir "test1.input1.tokens.err"        
+        runTest exe true [inputPath dir "test1.input1"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input1.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1compatVariations() =
+        let exe = "test1compatVariations.exe"
+        let dir = @"../../tests/FsYacc/test1compatVariations"
+        test1BasedCompilation false true dir exe
+        let errOut = testPath dir "test1.input2.err"        
+        runTest exe false (["test1.input2.variation1";"test1.input2.variation2"] |> List.map (inputPath dir)) errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input2.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1unicode() =
+        let exe = "test1unicode.exe"
+        let dir = @"../../tests/FsYacc/test1unicode"
+        test1BasedCompilation true false dir exe
+        let errOut = testPath dir "test1.input1.err"        
+        runTest exe false [inputPath dir "test1.input1"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input1.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1unicodeTokens() =
+        let exe = "test1unicodeTokens.exe"
+        let dir = @"../../tests/FsYacc/test1unicodeTokens"
+        test1BasedCompilation true false dir exe
+        let errOut = testPath dir "test1.input1.tokens.err"        
+        runTest exe true [inputPath dir "test1.input1"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input1.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    [<Test>]
+    member this.test1unicodeVariations() =
+        let exe = "test1unicodeVariations.exe"
+        let dir = @"../../tests/FsYacc/test1unicodeVariations"
+        test1BasedCompilation true false dir exe
+        let errOut = testPath dir "test1.input2.err"        
+        runTest exe false (["test1.input2.variation1";"test1.input2.variation2"] |> List.map (inputPath dir)) errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1.input2.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+
+    //[<Test>]
+    member this.test1unicodeUTF8() =
+        let exe = "test1unicodeUTF8.exe"
+        let dir = @"../../tests/FsYacc/test1unicodeUTF8"
+        test1BasedCompilation true false dir exe
+        let errOut = testPath dir "test1.input1.err"        
+        runTest exe true [inputPath dir "test1-unicode.input3.utf8"] errOut
+        printfn "Compare error output."
+        let chPath = checkPath dir "test1-unicode.input3.tokens.bsl"
+        if compareResult errOut chPath
+        then Assert.Pass()
+        else Assert.Fail(errOut + " is not equal to " + chPath)
+    
