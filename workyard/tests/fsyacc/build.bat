@@ -15,7 +15,8 @@ REM Just copy local all binaries for tests
 xcopy /Y %FSP_BASE%"\*.dll"
 xcopy /Y %FSP_BASE%"\*.exe"
 
-set fsp_flag=-r FSharp.PowerPack.dll -r FSharp.PowerPack.Compatibility.dll
+set fsp_flag=-r FSharp.PowerPack.dll 
+set fsp_compat_flag=-r FSharp.PowerPack.Compatibility.dll
 
 REM UNICODE test1-unicode
 
@@ -57,7 +58,7 @@ REM UNICODE test1-unicode
 "%FSYACC%" --module TestParser -o test1compat.fs --ml-compatibility test1.fsy
 @if ERRORLEVEL 1 goto Error
 
-"%FSC%" %fsc_flags% %fsp_flag% -g -o:test1compat%ILX_SUFFIX%.exe tree.fs test1compat.fsi test1compat.fs test1lex.fs main.fs
+"%FSC%" %fsc_flags% %fsp_flag% %fsp_compat_flag% -g -o:test1compat%ILX_SUFFIX%.exe tree.fs test1compat.fsi test1compat.fs test1lex.fs main.fs
 @if ERRORLEVEL 1 goto Error
 
 "%FSYACC%" --module TestParser -o test2.fs test2.fsy
@@ -69,7 +70,7 @@ REM UNICODE test1-unicode
 "%FSYACC%" --module TestParser -o test2compat.fs --ml-compatibility test2.fsy
 @if ERRORLEVEL 1 goto Error
 
-"%FSC%" %fsc_flags% %fsp_flag% -g -o:test2compat%ILX_SUFFIX%.exe tree.fs test2compat.fsi test2compat.fs test1lex.fs main.fs
+"%FSC%" %fsc_flags% %fsp_flag% %fsp_compat_flag% -g -o:test2compat%ILX_SUFFIX%.exe tree.fs test2compat.fsi test2compat.fs test1lex.fs main.fs
 @if ERRORLEVEL 1 goto Error
 
 "%FSLEX%" --unicode -o test1-unicode-lex.fs test1-unicode-lex.fsl
