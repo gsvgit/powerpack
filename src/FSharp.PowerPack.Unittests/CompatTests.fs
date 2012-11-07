@@ -789,4 +789,4 @@ type public FuncConvertTests() =
         check "dwe098ce4" ((Microsoft.FSharp.Core.FuncConvert.FuncFromTupled(fun (a,b,c,d,e) -> a + b + c + d + e)) 3 4 5 5 5) 22
 
         check "dwe098ce1" ((Microsoft.FSharp.Core.FuncConvert.ToFSharpFunc(System.Converter(fun a -> a + 1))) 3) 4
-        check "dwe098ce1" ((Microsoft.FSharp.Core.FuncConvert.ToFSharpFunc(System.Action<_>(fun a -> ()))) 3) ()
+        //check "dwe098ce1" ((Microsoft.FSharp.Core.FuncConvert.ToFSharpFunc(System.Action<_>(fun a -> ()))) 3) ()
