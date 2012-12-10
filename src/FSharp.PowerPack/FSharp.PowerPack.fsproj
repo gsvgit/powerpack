@@ -109,6 +109,7 @@
     <Compile Include="LazyList.fs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core" />
     <Reference Include="mscorlib" />
     <Reference Include="System" />
     <Reference Condition="'$(TargetFramework)' == 'Silverlight'" Include="System.Net" />
