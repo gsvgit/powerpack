@@ -11,7 +11,7 @@ open System.Collections.Generic
 open System.IO
 
 type HashTable<'Key,'Val> = HashMultiMap<'Key,'Val> 
-type ('Key,'Val) t = HashMultiMap<'Key,'Val> 
+type t<'Key,'Val> = HashMultiMap<'Key,'Val> 
 
 let inline create (n:int) = new HashMultiMap<_,_>(n, HashIdentity.Structural)
 

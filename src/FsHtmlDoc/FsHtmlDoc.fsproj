@@ -6,6 +6,7 @@
     <SccProvider>SAK</SccProvider>
     <SccAuxPath>SAK</SccAuxPath>
     <SccLocalPath>SAK</SccLocalPath>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -17,7 +18,7 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>fshtmldoc</AssemblyName>
     <AllowCrossTargeting>true</AllowCrossTargeting>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <!-- These dummy entries are needed for F# Beta2 -->
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -33,7 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core" />
     <ProjectReference Include="$(FSharpPowerPackSourcesRoot)\FSharp.PowerPack\FSharp.PowerPack.fsproj" Condition="Exists( '$(FSharpPowerPackSourcesRoot)\FSharp.PowerPack\FSharp.PowerPack.fsproj' )">
       <Project>{649FA588-F02E-457C-9FCF-87E46407481F}</Project>
       <Name>FSharp.PowerPack</Name>
